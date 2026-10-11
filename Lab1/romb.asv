@@ -1,0 +1,8 @@
+function romb(N,M)
+% this function draws romb lol
+
+macierz = zeros(N,M);
+
+if (N > M)
+    for 
+end
