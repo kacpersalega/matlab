@@ -6,15 +6,12 @@ x = linspace(0, 3*T, 1000);
 f = zeros(size(x));
 
 for n = 0:N
-    phi_n = -(3/4) * pi * n;
-    
     if n == 0
         A_n = A / 2;
     else
-        arg = n / 4;
-        A_n = A * (sin(pi * arg) / (pi * arg));
+        A_n = A * (sin(pi * n/4) / (pi * n/4));
     end
-    
+    phi_n = -(3/4) * pi * n;
     f = f + A_n * cos(2 * pi * (n / T) * x + phi_n);
 end
 
