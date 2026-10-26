@@ -1,23 +1,41 @@
-% 1. Wybieramy punkt 'x', dla którego chcemy policzyć wynik (np. x = 2)
-x = 2; 
+% 1. Przygotowanie danych
+x = linspace(-2*pi, 2*pi, 200); % Oś X od -2pi do 2pi (200 punktów)
+y_oryginalna = sin(x);          % Oryginalna funkcja
 
-% 2. Ustalamy ile wyrazów szeregu chcemy zsumować (to górne 'n' nad Sigmą ze slajdu 1)
-% Im większe n, tym dokładniejszy wynik.
-n = 10; 
+% 2. Tworzenie i formatowanie głównego wykresu
+figure;
+plot(x, y_oryginalna, 'k-', 'LineWidth', 2.5); % Rysowanie grubą czarną linią
+hold on;                                       % Zatrzymanie wykresu, by dodać kolejne linie
+grid on;                                       % Włączenie siatki
+ylim([-2, 2]);                                 % Ograniczenie osi Y dla lepszej czytelności
 
-% 3. Zmienna, do której będziemy "zbierać" naszą sumę
-przyblizenie_taylora = 0; 
+% 3. Definicja rzędów przybliżenia (ile wyrazów szeregu bierzemy)
+% Dla sin(x) bierzemy pod uwagę k=0, 1, 2, 3 (co odpowiada potęgom 1, 3, 5, 7)
+wartosci_k = [0, 1, 2, 3]; 
+kolory = ['r', 'g', 'b', 'm']; % Kolory dla kolejnych linii
+tekst_legendy = {'Oryginalny sin(x)'};
 
-% 4. Pętla 'for' zastępuje matematyczny symbol sumy (Sigma od k=0 do n)
-for k = 0:n
-    % Obliczamy pojedynczy ułamek ze wzoru: x^k / k!
-    % Zgodnie ze slajdem 1, do k! używamy wbudowanej funkcji factorial()
-    pojedynczy_wyraz = (x^k) / factorial(k);
-
-    % Dodajemy ten ułamek do całkowitej sumy
-    przyblizenie_taylora = przyblizenie_taylora + pojedynczy_wyraz;
+% 4. Pętla rysująca kolejne przybliżenia
+for i = 1:length(wartosci_k)
+    n = wartosci_k(i);
+    y_przyblizenie = zeros(1, length(x));
+    
+    % Sumowanie wielomianu Taylora do n-tego wyrazu
+    for k = 0:n
+        % Uwaga na operacje tablicowe: .^ zamiast ^
+        wyraz = ((-1)^k .* x.^(2*k + 1)) ./ factorial(2*k + 1); 
+        y_przyblizenie = y_przyblizenie + wyraz;
+    end
+    
+    % Dodanie linii przybliżenia do wykresu
+    plot(x, y_przyblizenie, 'Color', kolory(i), 'LineWidth', 1.5, 'LineStyle', '--');
+    
+    % Dodanie opisu do legendy (potęga 2n+1)
+    tekst_legendy{end+1} = sprintf('Przybliżenie do x^{%d}', 2*n+1);
 end
 
-% 5. Wyświetlamy i porównujemy wyniki w oknie Command Window
-disp(['Nasze przybliżenie Taylora dla e^2: ', num2str(przyblizenie_taylora)]);
-disp(['Dokładny wynik z funkcji wbudowanej exp(2): ', num2str(exp(x))]);
+% 5. Upiększanie wykresu
+title('Przybliżenie funkcji sin(x) szeregiem Taylora', 'FontSize', 14);
+xlabel('Oś X', 'FontSize', 12);
+ylabel('Wartość f(x)', 'FontSize', 12);
+legend(tekst_legendy, 'Location', 'southoutside', 'NumColumns', 3);
